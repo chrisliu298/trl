@@ -556,7 +556,7 @@ class DPOTrainer(Trainer):
 
         is_encoder_decoder = self.is_encoder_decoder
         is_vision_model = self.is_vision_model
-        processor = self.processor
+        # processor = self.processor
         tokenizer = self.tokenizer
         label_pad_token_id = self.label_pad_token_id
         max_length = self.max_length
@@ -887,12 +887,10 @@ class DPOTrainer(Trainer):
         # see: https://github.com/huggingface/trl/pull/1255
         with PartialState().local_main_process_first():
             # tokenize the dataset, lower writer batch size to avoid OOM (frequent in vision models)
-            train_dataset = train_dataset.map(
-                self.tokenize_row, num_proc=self.dataset_num_proc
-            )
+            train_dataset = train_dataset.map(self.dataset_num_proc)
             if eval_dataset is not None:
                 eval_dataset = eval_dataset.map(
-                    self.tokenize_row, num_proc=self.dataset_num_proc
+                    tokenize_row, num_proc=self.dataset_num_proc
                 )
 
         super().__init__(
